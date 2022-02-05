@@ -4,17 +4,17 @@ import Link from 'next/link'
 interface GameItemProps {
   title: string
   platform: string
-  image: string
+  thumbnail: string
 }
 
 export default function FeaturedGamesItem(props: GameItemProps) {
-  const {title, platform, image} = props
+  const {title, platform, thumbnail} = props
   return (
     <div className="featured-game-card position-relative">
       <Link href="/detail">
         <a>
           <div className="blur-sharp">
-            <Image className="thumbnail" src={image} width={205} height={270} alt="" />
+            <Image className="thumbnail" src={thumbnail} width={205} height={270} alt="" />
           </div>
           <div className="cover position-absolute bottom-0 m-32">
             <div className="d-flex flex-column h-100 justify-content-between text-decoration-none">
