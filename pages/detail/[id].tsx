@@ -1,9 +1,36 @@
+import { useRouter } from "next/router";
+import { useCallback, useEffect, useState } from "react";
 import Footer from "../../components/organisms/footer";
 import Navbar from "../../components/organisms/navbar";
 import TopUpForm from "../../components/organisms/topUpForm";
 import TopUpItem from "../../components/organisms/topUpItem";
+import { getVoucherDetail } from "../../services/player";
 
 export default function Detail() {
+  const {query, isReady} = useRouter()
+  const [dataItem, setDataItem] = useState({
+    name: '',
+    thumbnail: '',
+    category: {
+      name: ''
+    }
+  })
+
+  const [nominals, setNominals] = useState([])
+  const [payments, setPayments] = useState([])
+
+  const getVoucher = useCallback( async (id) =>{
+    const data = await getVoucherDetail(id)
+      setDataItem(data.detail)
+      setNominals(data.detail.nominals)
+      setPayments(data.payments)
+  }, [])
+  
+  useEffect( () => {
+    if(isReady){
+      getVoucher(query.id)
+    }
+  }, [isReady] );
   return(
     <>
       <Navbar />
@@ -15,12 +42,12 @@ export default function Detail() {
           </div>
           <div className="row">
             <div className="col-xl-3 col-lg-4 col-md-5 pb-30 pb-md-0 pe-md-25 text-md-start">
-              <TopUpItem type={"desktop"} />
+              <TopUpItem data={dataItem} type={"desktop"} />
             </div>
             <div className="col-xl-9 col-lg-8 col-md-7 ps-md-25">
-              <TopUpItem type={"mobile"} />
+              <TopUpItem data={dataItem} type={"mobile"} />
               <hr />
-              <TopUpForm />
+              <TopUpForm nominals={nominals} payments={payments}/>
             </div>
           </div>
         </div>
