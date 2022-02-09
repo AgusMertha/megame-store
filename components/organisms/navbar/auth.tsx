@@ -1,11 +1,42 @@
+import Cookies from 'js-cookie';
 import Link from 'next/link'
+import { useEffect, useState } from 'react';
+import jwt_decode from 'jwt-decode'
+import { JWTPayloadTypes, UserTypes } from '../../../services/dataTypes';
+import { useRouter } from 'next/router';
 
-interface AuthProps {
-  isLogin?: boolean;
-}
+export default function Auth() {
+  const [isLogin, setIsLogin] = useState(false)
+  const [user, setUser] = useState({
+    avatar: "",
+    email: "",
+    id: "",
+    name: "",
+    phoneNumber: "",
+    username: ""
+  })
+  const router = useRouter()
 
-export default function Auth(props: Partial<AuthProps>) {
-  const {isLogin} = props;
+  const IMG_URL = process.env.NEXT_PUBLIC_IMAGE_URL
+
+  useEffect( () => {
+    const token = Cookies.get('tkn__')
+
+    if(token){
+      const jwtToken = atob(token!.toString())
+      const payload: JWTPayloadTypes = jwt_decode(jwtToken)
+      const userPayload: UserTypes = payload.player
+      userPayload.avatar = `${IMG_URL}/${userPayload.avatar}`
+      setUser(userPayload)
+      setIsLogin(true)
+    }
+  })
+
+  const onLogout = () => {
+    Cookies.remove('tkn__')
+    router.push('/')
+    setIsLogin(false)
+  }
 
   if(!isLogin) {
     return (
@@ -22,7 +53,7 @@ export default function Auth(props: Partial<AuthProps>) {
         <div>
           <Link href="#">
             <a className="dropdown-toggle ms-lg-40" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-              <img src="/img/avatar-1.png" className="rounded-circle" width="40" height="40" alt=""/>
+              <img src={user.avatar} className="rounded-circle" width="40" height="40" alt=""/>
             </a>
           </Link>
           <ul className="dropdown-menu border-0" aria-labelledby="dropdownMenuLink">
@@ -41,10 +72,8 @@ export default function Auth(props: Partial<AuthProps>) {
                 <a className="dropdown-item text-lg color-palette-2">Account Settings</a>
               </Link>
             </li>
-            <li>
-              <Link href="/sign-in">
-                <a className="dropdown-item text-lg color-palette-2">Log Out</a>
-              </Link>
+            <li onClick={onLogout}>
+            <a href="#" className="dropdown-item text-lg color-palette-2">Log Out</a>
             </li>
           </ul>
         </div>

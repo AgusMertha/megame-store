@@ -22,6 +22,9 @@ export default function Detail() {
   const getVoucher = useCallback( async (id) =>{
     const data = await getVoucherDetail(id)
       setDataItem(data.detail)
+
+      localStorage.setItem('data-item', JSON.stringify(data.detail))
+
       setNominals(data.detail.nominals)
       setPayments(data.payments)
   }, [])

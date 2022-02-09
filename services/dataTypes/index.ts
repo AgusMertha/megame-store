@@ -36,3 +36,21 @@ export interface CategoryTypes {
   _id: string
   name: string
 }
+
+export interface SignInTypes {
+  email: string
+  password: string
+}
+
+export interface UserTypes {
+  avatar: string,
+  email: string,
+  id: string,
+  name: string,
+  phoneNumber: string,
+  username: string
+}
+
+export interface JWTPayloadTypes {
+  player: UserTypes,
+}
