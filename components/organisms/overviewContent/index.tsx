@@ -1,8 +1,18 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { toast } from 'react-toastify'
+import { getMemberOverview } from '../../../services/member'
 import Categories from '../../molecules/overviewItem/categories'
 import TableRow from '../../molecules/overviewItem/tableRow'
 
 export default function OverviewContent() {
+  useEffect(async () => {
+    const response = await getMemberOverview()
+      if(response.error){
+        toast.error(response.message)
+      }else{
+        console.log(response)
+      }
+  }, [])
   return (
     <main className="main-wrapper">
       <div className="ps-lg-0">

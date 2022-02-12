@@ -1,8 +1,7 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import cx from 'classnames'
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
 import { setSignIn } from '../../../services/auth';
 import { useRouter } from 'next/router';
 import Cookies from 'js-cookie'
@@ -54,7 +53,7 @@ export default function SignInForm() {
         <a className="btn btn-sign-up fw-medium text-lg color-palette-1 rounded-pill">Sign Up</a>
         </Link>
       </div> 
-      <ToastContainer/>
+      
     </>
   )
 }

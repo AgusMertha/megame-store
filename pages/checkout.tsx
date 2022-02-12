@@ -11,7 +11,6 @@ interface CheckoutProps {
 
 export default function Checkout(props: CheckoutProps) {
   const {user} = props;
-  console.log(user)
   return (
     <section className="checkout mx-auto pt-md-100 pb-md-145 pt-30 pb-30">
       <div className="container-fluid">
@@ -33,7 +32,15 @@ export default function Checkout(props: CheckoutProps) {
   );
 }
 
-export const getServerSideProps = async ({req}: any) => {
+interface getServerSideProps {
+  req: {
+    cookies: {
+      tkn__: string
+    }
+  }
+}
+
+export const getServerSideProps = async ({req}: getServerSideProps) => {
   const {tkn__} = req.cookies
   console.log(tkn__);
   
@@ -52,7 +59,6 @@ export const getServerSideProps = async ({req}: any) => {
   const payload: JWTPayloadTypes = jwt_decode(jwtToken)
   const userPayload: UserTypes = payload.player
   userPayload.avatar = `${IMG_URL}/${userPayload.avatar}`
-  console.log(payload);
   return {
     props: {
       user: userPayload

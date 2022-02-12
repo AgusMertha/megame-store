@@ -3,8 +3,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { setSignUp } from '../services/auth'
 import { CategoryTypes } from '../services/dataTypes'
 import { getGameCategories } from '../services/player'
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { toast } from 'react-toastify';
 import { useRouter } from 'next/router'
 
 export default function SignUpPhoto() {
@@ -100,7 +99,6 @@ export default function SignUpPhoto() {
           </div>
         </form>
       </div>
-      <ToastContainer/>
     </section>
   )
 }
