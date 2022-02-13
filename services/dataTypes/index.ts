@@ -63,3 +63,9 @@ export interface CheckoutTypes {
   name: string
   accountUser: string
 }
+
+export interface TopupCategoryTypes {
+  _id: string
+  value: number
+  name:string
+}

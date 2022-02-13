@@ -1,18 +1,28 @@
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
+import { TopupCategoryTypes } from '../../../services/dataTypes'
 import { getMemberOverview } from '../../../services/member'
 import Categories from '../../molecules/overviewItem/categories'
 import TableRow from '../../molecules/overviewItem/tableRow'
 
 export default function OverviewContent() {
-  useEffect(async () => {
-    const response = await getMemberOverview()
-      if(response.error){
-        toast.error(response.message)
-      }else{
-        console.log(response)
-      }
+  const [count, setCount] = useState([])
+  const [data, setData] = useState([])
+  const getOverview = useCallback( async () => {
+    const response =  await getMemberOverview()
+    if(response.error){
+      toast.error(response.message)
+    }else{
+      setCount(response.data.count)
+      setData(response.data.data)
+    }
+  }, [getMemberOverview])
+
+  useEffect(() => {
+    getOverview()
   }, [])
+
+  const API_IMAGE = process.env.NEXT_PUBLIC_IMAGE_URL
   return (
     <main className="main-wrapper">
       <div className="ps-lg-0">
@@ -21,21 +31,14 @@ export default function OverviewContent() {
           <p className="text-lg fw-medium color-palette-1 mb-14">Top Up Categories</p>
           <div className="main-content">
             <div className="row">
-              <Categories nominal={18050000} icon="/icon/overview/ic-desktop.svg">
-                Game
-                <br/>
-                Desktop
-              </Categories>
-              <Categories nominal={12500000} icon="/icon/overview/ic-mobile.svg">
-                Game
-                <br/>
-                Mobile
-              </Categories>
-              <Categories nominal={8540000} icon="/icon/overview/ic-other.svg">
-                Other
-                <br/>
-                Categories
-              </Categories>
+              {
+                count.map((c: TopupCategoryTypes) => {
+                  return <Categories key={c._id} nominal={c.value} icon="/icon/overview/ic-desktop.svg">
+                    {c.name}   
+                  </Categories>
+                })
+              }
+              
               
             </div>
           </div>
@@ -53,9 +56,22 @@ export default function OverviewContent() {
                 </tr>
               </thead>
               <tbody>
-                <TableRow title="Mobile Legend" category="Mobile" item={200} price={150000} status="Success" image="overview-1"/>
-                <TableRow title="Call of Duty" category="Desktop" item={500} price={1000000} status="Failed" image="overview-2"/>
-                <TableRow title="Clash of Clans" category="Mobile" item={200} price={150000} status="Pending" image="overview-3"/>
+                {
+                  data.map((item: any) => {
+                    return (
+                      <TableRow 
+                        key={item._id}
+                        title={item.historyVoucherTopup.gameName} 
+                        category={item.category.name} 
+                        item={item.historyVoucherTopup.coinQuantity} 
+                        coinName={item.historyVoucherTopup.coinName} 
+                        price={item.value} status={item.status} 
+                        image={`${API_IMAGE}/${item.historyVoucherTopup.thumbnail}`}
+                      />
+                    )
+                  })
+                }
+                
               </tbody>
             </table>
           </div>

@@ -1,8 +1,11 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import ButtonTab from './buttonTab'
 import TableRow from './tableRow'
 
 export default function TranscactionContent() {
+  useEffect(() =>{
+
+  }, [])
   return (
     <main className="main-wrapper">
       <div className="ps-lg-0">

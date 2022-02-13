@@ -1,3 +1,5 @@
+import Cookies from 'js-cookie'
+import { useRouter } from 'next/router'
 import React from 'react'
 import SidebarItem from '../../molecules/sidebarItem'
 import Footer from './footer'
@@ -9,6 +11,12 @@ interface sidebarProps {
 
 export default function SideBar(props: sidebarProps) {
   const {activeMenu} = props
+  const router = useRouter()
+  const onLogout = () => {
+    Cookies.remove('tkn__')
+    router.push('/')
+  }
+
   return (
     <section className="sidebar">
       <div className="content pt-50 pb-30 ps-30">
@@ -20,7 +28,7 @@ export default function SideBar(props: sidebarProps) {
           <SidebarItem title={'Card'} icon={'/icon/sidebar/card.svg'} href="/member"/>
           <SidebarItem title={'Rewards'} icon={'/icon/sidebar/reward.svg'} href="/member"/>
           <SidebarItem title={'Settings'} active={activeMenu == 'settings'} icon={'/icon/sidebar/setting.svg'} href="/member/edit-profile"/>
-          <SidebarItem title={'Log Out'} icon={'/icon/sidebar/logout.svg'} href="/member"/>
+          <SidebarItem title={'Log Out'} icon={'/icon/sidebar/logout.svg'} onClick={onLogout}/>
         </div>
         <Footer/>
       </div>
