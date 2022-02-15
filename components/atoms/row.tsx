@@ -1,6 +1,6 @@
 interface rowProps {
   title: string,
-  value: string | number,
+  value: any,
   className?: string
 }
 export default function Row(props: Partial<rowProps>) {

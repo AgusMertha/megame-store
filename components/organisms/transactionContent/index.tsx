@@ -1,26 +1,52 @@
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
+import NumberFormat from 'react-number-format'
+import { toast } from 'react-toastify'
+import { getMemberTransactions } from '../../../services/member'
 import ButtonTab from './buttonTab'
 import TableRow from './tableRow'
 
 export default function TranscactionContent() {
-  useEffect(() =>{
-
+  const [memberTransactions, setMemberTransactions] = useState([])
+  const [totalTransaction, setTotalTransaction] = useState(0)
+  const [tab, setTab] = useState('all')
+  
+  const memberTranasctionList = useCallback( async (value) => {
+    const response = await getMemberTransactions(value)
+    if(response.error){
+      toast.error(response.message)
+    }else{
+      setMemberTransactions(response.data.data)
+      setTotalTransaction(response.data.total)
+    }
   }, [])
+  useEffect(() =>{
+    memberTranasctionList("all")
+  }, [])
+
+  const onTabClick = (value: string) => {
+    setTab(value)
+    memberTranasctionList(value)
+  }
+
+  const API_IMAGE = process.env.NEXT_PUBLIC_IMAGE_URL
+
   return (
     <main className="main-wrapper">
       <div className="ps-lg-0">
         <h2 className="text-4xl fw-bold color-palette-1 mb-30">My Transactions</h2>
         <div className="mb-30">
           <p className="text-lg color-palette-2 mb-12">You’ve spent</p>
-          <h3 className="text-5xl fw-medium color-palette-1">Rp 4.518.000.500</h3>
+          <h3 className="text-5xl fw-medium color-palette-1">
+            <NumberFormat value={totalTransaction} displayType={'text'} prefix={'Rp. '} thousandSeparator={'.'} decimalSeparator={","}/>
+          </h3>
         </div>
         <div className="row mt-30 mb-20">
           <div className="col-lg-12 col-12 main-content">
             <div id="list_status_title">
-              <ButtonTab title="All Trx" active={true} filter="*"/>
-              <ButtonTab title="Success" active={false} filter="success"/>
-              <ButtonTab title="Pending" active={false} filter="pending"/>
-              <ButtonTab title="Failed" active={false} filter="failed"/>
+              <ButtonTab onClick={ () => onTabClick("all")} title="All Trx" active={tab === 'all'} filter="*"/>
+              <ButtonTab onClick={ () => onTabClick("success")} title="Success" active={tab === 'success'} filter="success"/>
+              <ButtonTab onClick={ () => onTabClick("pending")} title="Pending" active={tab === 'pending'} filter="pending"/>
+              <ButtonTab onClick={ () => onTabClick("failed")} title="Failed" active={tab === 'failed'} filter="failed"/>
             </div>
           </div>
         </div>
@@ -38,10 +64,23 @@ export default function TranscactionContent() {
                 </tr>
               </thead>
               <tbody id="list_status_item">
-                <TableRow title="Mobile Legend" category="Mobile" image="overview-1" item={200} price={155000} status="Pending"/>
-                <TableRow title="Clash of Clans" category="Mobile" image="overview-3" item={500} price={250000} status="Success"/>
-                <TableRow title="Call of Duty" category="Desktop" image="overview-2" item={350} price={50000} status="Failed"/>
-                <TableRow title="Mobile Legend" category="Desktop" image="overview-4" item={120} price={155000} status="Pending"/>
+                {
+                  memberTransactions.map((transaction: any) => {
+                    console.log(transaction);
+                    return (
+                      <TableRow 
+                        key={transaction._id} 
+                        id={transaction._id} 
+                        title={transaction.historyVoucherTopup.gameName} 
+                        category={transaction.historyVoucherTopup.category} 
+                        image={`${API_IMAGE}/${transaction.historyVoucherTopup.thumbnail}`}
+                        item={`${transaction.historyVoucherTopup.coinQuantity} ${transaction.historyVoucherTopup.coinName}`}
+                        price={transaction.value}
+                        status={transaction.status} 
+                      />)
+                  })
+                }
+                
               </tbody>
             </table>
           </div>

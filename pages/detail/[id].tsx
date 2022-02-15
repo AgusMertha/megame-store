@@ -4,36 +4,19 @@ import Footer from "../../components/organisms/footer";
 import Navbar from "../../components/organisms/navbar";
 import TopUpForm from "../../components/organisms/topUpForm";
 import TopUpItem from "../../components/organisms/topUpItem";
-import { getVoucherDetail } from "../../services/player";
+import { GameItemTypes, NominalTypes, PaymentTypes } from "../../services/dataTypes";
+import { getFeaturedGame, getVoucherDetail } from "../../services/player";
 
-export default function Detail() {
-  const {query, isReady} = useRouter()
-  const [dataItem, setDataItem] = useState({
-    name: '',
-    thumbnail: '',
-    category: {
-      name: ''
-    }
-  })
+interface DetailProps {
+  dataItem: GameItemTypes
+  nominals: NominalTypes[]
+  payments: PaymentTypes[]
+}
 
-  const [nominals, setNominals] = useState([])
-  const [payments, setPayments] = useState([])
-
-  const getVoucher = useCallback( async (id) =>{
-    const data = await getVoucherDetail(id)
-      setDataItem(data.detail)
-
-      localStorage.setItem('data-item', JSON.stringify(data.detail))
-
-      setNominals(data.detail.nominals)
-      setPayments(data.payments)
+export default function Detail({dataItem, nominals, payments}: DetailProps) {
+  useEffect(() => {
+    localStorage.setItem('data-item', JSON.stringify(dataItem))
   }, [])
-  
-  useEffect( () => {
-    if(isReady){
-      getVoucher(query.id)
-    }
-  }, [isReady] );
   return(
     <>
       <Navbar />
@@ -58,4 +41,40 @@ export default function Detail() {
       <Footer/>
     </>
   );
+}
+
+export async function getStaticPaths() {
+  const data  = await getFeaturedGame()
+  const paths = data.map((item: GameItemTypes) => {
+    return {
+      params: {
+        id: item._id
+      }
+    }
+  })
+
+  console.log(paths)
+  return {
+    paths,
+    fallback: false
+  }
+}
+
+interface GetStaticProps {
+  params: {
+    id: string
+  }
+}
+
+export async function getStaticProps({params}: GetStaticProps) {
+  const {id} = params
+  const data = await getVoucherDetail(id)
+  console.log(data)
+  return {
+    props: {
+      dataItem: data.detail,
+      nominals: data.detail.nominals,
+      payments: data.payments
+    }
+  }
 }

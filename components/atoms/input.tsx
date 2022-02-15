@@ -2,7 +2,7 @@ export interface inputProps {
   label: string
 }
 
-export default function Input(props: inputProps) {
+export default function  Input(props: inputProps) {
   const { label, ...nativeProps } = props
   return (
     <>

@@ -65,7 +65,8 @@ export default function OverviewContent() {
                         category={item.category.name} 
                         item={item.historyVoucherTopup.coinQuantity} 
                         coinName={item.historyVoucherTopup.coinName} 
-                        price={item.value} status={item.status} 
+                        price={item.value} 
+                        status={item.status} 
                         image={`${API_IMAGE}/${item.historyVoucherTopup.thumbnail}`}
                       />
                     )
